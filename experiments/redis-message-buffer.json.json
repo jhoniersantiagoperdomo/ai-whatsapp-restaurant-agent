@@ -1,0 +1,272 @@
+{
+  "name": "[5] Agente IA para restaurante copy",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "\nRedis Message Buffer (Experimental)",
+        "height": 920,
+        "width": 1756,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2352,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "79e59d79-0c43-43f3-8fe3-cac654829304",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('Edit Fields1').item.json[' chat_id']}}",
+        "messageData": "= {{ JSON.stringify(\n{\n'message': $json.final_message, \n'sessionid':  $json.sessionid, \n'times_tamp':  $json.times_tamp   }\n ) }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        640
+      ],
+      "id": "4915611c-3d46-4046-bee5-6be6a1dbf746",
+      "name": "Redis",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "menssage",
+        "key": "={{ $('Edit Fields1').item.json[' chat_id'] }}",
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2832,
+        640
+      ],
+      "id": "16f05afa-adbb-4df2-8eab-6b028b219e32",
+      "name": "Get message buffer",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.parse( $json.menssage.last()).sessionid}}",
+                    "rightValue": "={{ $('Edit Fields1').item.json.sessionid }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "id": "a8fdf8e6-ab69-4d2c-bdb6-a646c5e6c540"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ignorar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "269155b3-76f3-4e42-a1aa-361f8a600edc",
+                    "leftValue": "={{ JSON.parse( $json.menssage.last()).times_tamp}}",
+                    "rightValue": "={{ $now.minus(7,'seconds').toLocal() }}",
+                    "operator": {
+                      "type": "dateTime",
+                      "operation": "before"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "continuar"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "esperar"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        3056,
+        528
+      ],
+      "id": "3aebe43b-c056-484c-b71f-842e9f616b54",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "amount": 7
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3280,
+        736
+      ],
+      "id": "14378c5f-cb81-4121-9d82-93f025855b73",
+      "name": "Wait",
+      "webhookId": "52a75114-3e42-4c13-8dc2-b1915b8274a7"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3280,
+        352
+      ],
+      "id": "48b6f3b3-6ce4-4e7b-8e07-250a40232019",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('Edit Fields1').item.json[' chat_id'] }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3280,
+        544
+      ],
+      "id": "1db709f2-f050-4abb-bfe1-f4432e9673f5",
+      "name": "Dele_buffer",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bac755ff-d9e4-4ef7-b755-ffc2c14d13e1",
+              "name": "concat_message",
+              "value": "={{ $json.menssage.map(m=> JSON.parse(m).message).join('/n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3504,
+        544
+      ],
+      "id": "c5d34af3-d963-4afb-bf0c-14f55ad14b0d",
+      "name": "Edit Fields3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "Get message buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get message buffer": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dele_buffer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get message buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dele_buffer": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "180334c2-8b93-4fdf-944a-8234db3bd3ba",
+  "meta": {
+    "instanceId": "51575a0ffa0686445d1debbd1e4451307221ee62fd3955a3317b5eb206d68764"
+  },
+  "id": "pId6i0jJ5yqPlgUf",
+  "tags": []
+}

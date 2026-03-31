@@ -1,0 +1,1463 @@
+{
+  "name": "[5] Agente IA para restaurante copy",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=El usuario envía el siguiente mensaje:\n\nNombre_usuario: {{ $('Webhook').item.json.body.data.pushName }}\nMensaje del usauario: {{ $('Webhook').item.json.body.data.message.conversation }}\n\nId: {{ $('Webhook').item.json.body.data.key.remoteJid }}\nmessage_type: {{ $('Fields').item.json.Message_type }}\n",
+        "options": {
+          "systemMessage": "=# Rol  \nEres un asistente de ventas para una restaurante.Conoces a fondo los platos y comidas que vendemos y están en la tool \"menu\". Adicional, puedes asesorar a los clientes según sus necesidades y presupuesto.  \n\nHora actual: {{ $now }}\n\n# Tarea  \nTu tarea es ayudar a los clientes a elegir el plato o comida más adecuada para ellos, brindando información detallada un poco general sobre cada comida y diciéndoles el valor de cada una.. \n\n# Detalles Específicos  \n- Debes proporcionar información clara y objetiva sobre cada comida.\n- Pregunta al cliente sobre su presupuesto, necesidades y preferencias antes de hacer una recomendación.  \n- No menciones ni recomiendes otras comidas que no estén en el \"menu\" de la tienda.  \n\n# Contexto  \nEres un trabajador de un restaurante que se enfoca en tener una atención al clientte rápida y dar la mejor calidad de comida. El objetivo es ayudar a los clientes a tomar una decisión  sin abrumarlos con demasiadas opciones.  \n\n# Ejemplos  \n\n**Ejemplo 1**  \n**Cliente:** Hola, quiero comer algo rico, pero no tengo mucho presupuesto. ¿Qué me recomiendas\n**Asistente:** Tenemos varias opciones económicas y deliciosas. Si buscas algo accesible, te recomiendo la salchipapa, que es una combinación de papas fritas con salchichas, o las papas a la francesa, que son una excelente opción si quieres algo ligero. ¿Cuál te llama más la atención?\n\n**Ejemplo 2**  \n**Cliente:** Me gustaría algo con carne, ¿qué opciones tienen?\n**Asistente:** Si prefieres carne, te recomiendo nuestra hamburguesa, que viene con carne de res jugosa, acompañada de pan, vegetales frescos y salsas. También puedes probar el plato especial, que tiene una combinación de carnes y acompañamientos. ¿Te gustaría conocer más detalles de alguno?\n\n**Ejemplo 3**  \n**Cliente:** Quiero algo para compartir con amigos, ¿qué me sugieres?\n**Asistente:** Si buscas algo ideal para compartir, te recomiendo la mazorcada o la mazorcada de maíz. Son platos grandes con ingredientes como maíz, papas, carne desmechada y salsas, perfectos para varias personas. ¿Prefieres con maíz dulce o una versión más clásica?\n\n# Herramientas o tools\n\nTienes dos herramientas o tools super importantes: **menu**  **orden** y **imagen del menu**. Así tienes que usarla:\n\n## Tool: menu\n\nCuando la persona pregunté por qué comidas o cuáles comidas tenemos, siempre dile todas las comidas que estén disponibles. Si pregunta por otras comidas, verifica en la tool si está, si no está dile que \"no vendemos eso\". \n\nUsa también esta tool cuando pidan el precio. Los precios están en moneda colombiana. SIEMPRE VERIFICA QUE ESTÉN BIEN LOS PRECIOS.\n\n## Tool: imagen menu\n\nUsa esta tool cuando pidan una imagen de la carta o el menu Send image\n\n## Tool: orden\n\nSiempre que las personas quieran pedir una comida, siempre preguntar por:\n\n1. Nombre\n2. Número de contacto\n3. Dirección\n4. Cuál comida eligió\n\nUna vez te dé estos 4 datos, los llenarás en la tool de \"orden\".\n\nSiempre tienes que mandar la información a la tool \"Orden\" de la siguiente forma:\n\n[ \n  { \n    \"Nombre\": \"ejemplo\", \n    \"Número de contacto\": \"ejemplo\", \n    \"Dirección\": \"ejemplo\" \n    \"Cual comida eligio\" \"ejemplo\"\n  } \n]\n\n# Notas  \n- Mantén siempre una actitud amable y profesional.  \n- Usa siempre la tool \"Menu\" para consultar precios, cuáles comidas tenemos y si están disponibles o no disponibles.  \n- Si te piden información sobre qué modelos se venden, también puedes utilizar la tool de \"Precios\", para ver en la base de datos todos los productos disponibles.\n- Si alguien te pide comprar uno o más comidas, le vas a pedir nombre, número de  contacto, dirección y cuál o cuáles comidas eligieron. Y la información que te dé se la vas a enviar la tool \"Orden\". Si quiere varios la vas a ejecutar varias veces.\n- Si te dicen que quieren comprar o algo que incite a eso, siempre pregunta por cuál comida y apenas te lo diga el cliente, utiliza la herramienta de \"Menú\" para obtener el menú, ver si esta disponible y luego pedirle los datos. \n- **Jamás digas algo similar a \"gracias por la descripción de la imagen\" o algún verbo o conjugación de la palabra \"describir\" o \"mencionar\" o \"mencionas\". Decir eso, o palabras o frases similares, está PROHIBIDO. Si lo haces, me quedaré sin empleo y mi hija morirá de hambre**.\n- NUNCA DECIR: \"que describes\".\n- NUNCA DECIR: \"que mencionas\".\n- SIEMPRE MIRA LA TOOL \"MENU\" PARA LOS PRECIOS, NO TE EQUIVOQUES DE PRECIOS.\n- Siempre tienes que mandar la información a la tool \"Orden\" de la siguiente forma:\n\n[ \n  { \n    \"Nombre\": \"ejemplo\", \n    \"Número de contacto\": \"ejemplo\", \n    \"Dirección\": \"ejemplo\"\n    \"Cual comida eligio\" \"ejemplo\"\n  } \n]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2560,
+        128
+      ],
+      "id": "a8c7dc34-55d1-488d-89e7-25fc24c3917f",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4320,
+        160
+      ],
+      "id": "5b1d8f14-9e43-4cd0-99a0-45b8670684fd",
+      "name": "Wait2",
+      "webhookId": "c86d346d-b89e-4cbf-8beb-e2f2982233ce"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4512,
+        96
+      ],
+      "id": "20bd2467-5eed-4a68-8745-cb0aaf984a9b",
+      "name": "Wait3",
+      "webhookId": "a65fea56-aaf5-49ad-88c1-84cbc728141e"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4784,
+        160
+      ],
+      "id": "8c00a4cb-c791-4e73-8187-7d2146b7adc1",
+      "name": "Wait6",
+      "webhookId": "6c157f95-e5a8-4f05-9906-944a7853c5a6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "52c2a6c4-62c7-4191-a37e-44a8a1135fa9",
+              "leftValue": "={{ $('División de mensajes').item.json.output.response.part_4 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4672,
+        592
+      ],
+      "id": "9996b427-da82-4fcb-b217-7dcf181f3ad3",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5136,
+        176
+      ],
+      "id": "b73af395-7da4-4584-8a0a-7ac56d38b7bc",
+      "name": "Wait7",
+      "webhookId": "8e4ecf28-7f84-4725-9a88-234408bbf3fb"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "52c2a6c4-62c7-4191-a37e-44a8a1135fa9",
+              "leftValue": "={{ $('División de mensajes').item.json.output.response.part_5 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5184,
+        416
+      ],
+      "id": "8608597f-b92b-460c-a463-4ca452440023",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "52c2a6c4-62c7-4191-a37e-44a8a1135fa9",
+              "leftValue": "={{ $('División de mensajes').item.json.output.response.part_3 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4384,
+        576
+      ],
+      "id": "6b0f79e8-1735-4f3a-9a19-39201a90700b",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseFormat": "json_object",
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        2992,
+        320
+      ],
+      "id": "87791da7-de9e-4830-a03a-d17a36e24ce5",
+      "name": "OpenAI Chat Model3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        3360,
+        368
+      ],
+      "id": "9b6e0f43-4f92-4819-8181-c0799cf3901e",
+      "name": "OpenAI Chat Model",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        368
+      ],
+      "id": "3cb46648-50ed-4bb6-a1a3-ad78cbbf573d",
+      "name": "Auto-fixing Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        3552,
+        512
+      ],
+      "id": "badef4b0-c4ab-43bf-a37b-c8854472deee",
+      "name": "OpenAI Chat Model4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"response\": {\n    \"part_1\": \"Contenido de la primera parte de la respuesta.\",\n    \"part_2\": \"Contenido de la segunda parte de la respuesta.\",\n    \"part_3\": \"Contenido de la ttercera parte de la respuesta. (opcional)\",\n    \"part_4\": \"Contenido de la cuarta parte de la respuesta (opcional)\"\n  }\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3712,
+        528
+      ],
+      "id": "b6d54951-cbb5-47ee-846f-3ae2d5b2de54",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Debes corregir este texto: \"{{ $json.output }}\" que responde al mensaje del usuario el cual fue y también \"{{ $('Webhook').item.json.body.data.message.conversation }}\"\n\nNunca uses estas frases:\n\n1. Que describes\n2. Que mencionas\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Tarea\nRecibirás la respuesta que se le dio a un mensaje del usuario y tu función principal y única es corregir el mensaje y emitirlo en una variable de respuesta, sumado a que debe cumplir con ciertas condiciones que aparecerán debajo.\n\n- Jamás digas algo similar a \"gracias por la descripción de la imagen\" o algún verbo o conjugación de la palabra \"describir\" o \"mencionar\" o \"mencionas\". Decir eso, o palabras o frases similares, está PROHIBIDO. Si lo haces, me quedaré sin empleo y mi hija morirá de hambre.\n\n# Formatos y estilos de respuesta\n- La respuesta que corrijas debe quedar como breve, corta y concisa de no más de 300 caracteres (en caso de ser extensa acortarla).\n- No debe de contener ni usar signos de exclamación.\n- Debe sonar como un colombiano.\n- Nunca usar comillas, para nada\n- Eliminar todo signo de \"¿\"\n- Si ya le dijimos al usuario antes “Si quieres saber más, avísame” o algún mensaje similar y resulta que el mensaje de ahora lo contiene y crees que puede sonar repetitivo, eliminarlo\n- En caso de que la oración que recibas no tenga todo el sentido del mundo, podés usar conectores como \"Por otro lado\", “Además de eso\", “Entonces\", “Así que\", “Por lo tanto\", “En base a eso”, etc.\n- Recordar seguir exactamente la estructura del JSON\n\n# Notas importantes\n\n- Al final de cada mensaje, usa cierres de mensajes como:\n1. \"Hay algo mas en lo que te pueda ayudar?\"\n2. \"Cualquier duda o consulta que tengas avísame que estoy.\"\n- Evita ser repetitivo, principalmente con \"Estoy aca para ayudarte\". El objetivo es que el cierre de mensaje vaya variando y sea humano y natural.\n- Jamás digas algo similar a \"gracias por la descripción de la imagen\" o algún verbo o conjugación de la palabra \"describir\" o \"mencionar\" o \"mencionas\". Decir eso, o palabras o frases similares, está PROHIBIDO. Si lo haces, me quedaré sin empleo y mi hija morirá de hambre.\n- NUNCA DECIR: \"que describes\".\n- NUNCA DECIR: \"que mencionas\"."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        3024,
+        128
+      ],
+      "id": "257590c1-188d-473e-b6b8-9647efeeb962",
+      "name": "AI Correctotr",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        2432,
+        384
+      ],
+      "id": "4161a501-b466-4de4-8d93-968cdf5f2a95",
+      "name": "OpenAI Chat Model2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "48a5aeec-5c8a-4f77-ac39-ad951e4c64b8",
+                    "leftValue": "={{\n  $json.body.data.messageType === 'audioMessage'\n  && Boolean($json.body.data.message?.audioMessage)\n}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "74fc474e-9cf7-4709-a59d-967d9f091e5e",
+                    "leftValue": "={{\n  $json.body.data.messageType === 'imageMessage'\n  && Boolean($json.body.data.message?.imageMessage)\n}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Imagen"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Text"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1072,
+        160
+      ],
+      "id": "c359c17b-34a7-4b77-801e-ed1d19ae1209",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ccc9dd6e-5c4a-4f11-ac50-92660e385ce1",
+              "name": "text",
+              "value": "={{ $json.body.data.message?.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        320
+      ],
+      "id": "b0050379-1b83-463a-a20d-1ed764b74e11",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "# Agente IA RESTAURANTE",
+        "height": 920,
+        "width": 1756,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2288,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "b49e91f3-a51a-4eb2-87f3-d06586a69130",
+      "name": "Sticky Note6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "# Enviar varios mensajes",
+        "height": 760,
+        "width": 1420,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4048,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "aad2bb63-a417-42fa-870c-2776600bfa46",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Respuesta a formatear:{{ $json.output }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Tarea\nLa función es la de escribir un JSON que contenga las diferentes partes potenciales sobre las cuales se puede dividir el mensaje que vayas a recibir.\n\n- Debes, obligatoriamente y SIEMPRE, emitir solo la respuesta en este formato JSON:\n\n{\n  \"respuesta_corregida\": \"\"\n}\n\n### Normas para Generar un JSON Válido como respuesta\nPara asegurar que el JSON generado sea válido y sin errores, sigue estas reglas:\n1. Elimina todos los asteriscos que encuentres para evitar la negrita.\n\nSiguiendo estas reglas, el json generado sera estructuralmente correcto y evitar errores al procesarlo.\n\n# Ejemplo de cómo hacerlo (no siempre pero para entender formato y evitar que cada parte acabe con una coma al final)\nSi el mensaje completo es: \"Claro. Necesito que me digas tu nombre, el motivo de la consulta, tu email y la fecha y hora que prefieras para la cita.\" <- Debe quedar como:\n- Cantidad de mensajes = 3\n- Mensaje pt1 = Claro\n- Mensaje pt2 = Necesito que me digas tu nombre, el motivo de la consulta\n- Mensaje pt3 = tu email, la fecha y la hora que prefieras para la cita\n\n# Notas\n- La variable de cantidad de mensajes representa el número de partes por las que debe de dividir el mensaje\n- Por último, la idea es que divides los mensajes suene  mejor, por ejemplo si el mensaje que recibes es breve, deberás ponerlo en 1 parte, y lo contrario (que sea más extenso o muy extenso) aplica cuando sean 2 o 3 partes.\n- Debe tener sentido la frase que separas y no superar lo que se recibe, y es importante que no hagas divisiones innecesarias.\n- Si es el texto que recibes es más largo que una oración, dividirlo por más partes.\n- El máximo de partes de mensajes pueden ser 4.\n- Se deben todas las oraciones de las partes empezar con mayúsculas.\n- En caso de que la oración que recibas no tenga todo el sentido del mundo, puedes usar conectores como \"Por otro lado\", \"Además de eso\", \"Entonces\", \"Así que\", \"Por lo tanto\", etc. \n- No usar más de tres veces el \"y\" como conector.\n- No poner NUNCA punto final"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        3424,
+        128
+      ],
+      "id": "d7299e54-3d7c-43f8-bc8e-06b446cf184a",
+      "name": "División de mensajes",
+      "retryOnFail": true,
+      "maxTries": 4
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e76d5a8e-1040-4e97-88a5-36c54547b11d",
+              "leftValue": "={{ $json.timeDifference.seconds }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        160
+      ],
+      "id": "a2bb8680-2e51-47b0-be0c-176ada7bebbe",
+      "name": "If",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2cc4470e-eb73-4174-bd18-954ebc9df19b",
+              "name": "Message_type",
+              "value": "={{ $('Webhook').item.json.body.data.messageType }}",
+              "type": "string"
+            },
+            {
+              "id": "7a24a738-0440-4628-b909-10b8c343e8aa",
+              "name": "Message_text",
+              "value": "={{ \"La siguiente descripción es una IMAGEN que el usuario compartió: \" + $json.image.caption }} {{ $json.text }}\n",
+              "type": "string"
+            },
+            {
+              "id": "47cab13e-276e-4ab2-9d02-ee40a292a235",
+              "name": "From",
+              "value": "={{ $('Webhook').item.json.body.data.key.remoteJid.replace('@s.whatsapp.net', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "6bf5810c-5a27-4915-b7d0-29720b78e90e",
+              "name": "Message_caption",
+              "value": "={{ $('Switch').item.json.video && $('Switch').item.json.video.caption || '' }} {{ $('Switch').item.json.image && $('Switch').item.json.image.caption || ''}} {{ $('Switch').item.json.audio && $('Switch').item.json.audio.caption || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "79faacd7-a569-48a0-a2a1-83b7218490f4",
+              "name": "image.caption",
+              "value": "={{ $json.body.data.message?.imageMessage?.caption }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1408,
+        160
+      ],
+      "id": "e5ccf11a-6f1a-483c-8f0a-19f3bc115fda",
+      "name": "Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        160
+      ],
+      "id": "e1c20122-ab5e-4397-8efb-3182179ac438",
+      "name": "Date & Time3"
+    },
+    {
+      "parameters": {
+        "operation": "getTimeBetweenDates",
+        "startDate": "={{ $('Webhook').item.json.body.data.messageTimestamp }}",
+        "endDate": "={{ $json.currentDate }}",
+        "units": [
+          "second"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1808,
+        160
+      ],
+      "id": "ffb80211-d958-4504-8d04-53f6dc5577b1",
+      "name": "Date & Time2"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=# Tarea\n\nEsta tool se activa cuando el usuario está buscando hacer un pedido o orden y envió los datos, por lo que se tiene que pedir al usuario tanto el nombre, el número de contacto y la dirección o domicilio a donde llevar la comida.\n\nVas a enviar esta información para así poder guardar una cita para la compra de un Iphone y para esto vas a enviar a esta herramienta de esta forma las tres variables:\n\n[ \n  { \n    \"Nombre\": \"348154635013\", \n    \"Número de contacto\": \"agustina\", \n    \"Dirección\": \"Comida\" \n  } \n]\n\nEse sería un ejemplo pero SIEMPRE tienes que respetar tanto el objeto como los nombres de las columnas, tienen que estar en mayúscula las primeras letras, no se acepta: \"NOMBRE\" o \"nombre\", SIEMPRE tiene que ser \"Nombre\" y lo mismo se aplica a las demás columnas.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14mKt9nofT2nypzC9aQX5eThgx9S9NgvOSQG1bVSo-jQ",
+          "mode": "list",
+          "cachedResultName": "orden",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14mKt9nofT2nypzC9aQX5eThgx9S9NgvOSQG1bVSo-jQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14mKt9nofT2nypzC9aQX5eThgx9S9NgvOSQG1bVSo-jQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nombre', ``, 'string') }}",
+            "Numero de contacto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Numero_de_contacto', ``, 'string') }}",
+            "Direccion ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Direccion_', ``, 'string') }}",
+            "Comida": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Comida', ``, 'string') }}",
+            "Precio a pagar": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Precio_a_pagar', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Numero de contacto",
+              "displayName": "Numero de contacto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Direccion ",
+              "displayName": "Direccion ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comida",
+              "displayName": "Comida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Precio a pagar",
+              "displayName": "Precio a pagar",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        2816,
+        432
+      ],
+      "id": "7f42cc67-3e37-4d57-8c65-eb447c576fff",
+      "name": "Orden",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/13AZTQWOPpazQ-Xs45GIUlM0KdQHA4KR9aFdbSySE5GU/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "menu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13AZTQWOPpazQ-Xs45GIUlM0KdQHA4KR9aFdbSySE5GU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        2896,
+        528
+      ],
+      "id": "a8adaf43-fbf4-4080-ba24-3fd1abdf7118",
+      "name": "Menu",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "# Lectura imagenes y audio",
+        "height": 900,
+        "width": 1632,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "8155bbd8-97bb-4921-bfde-aaa498ed4758",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6e83a809-4ab4-4c24-a829-b0f866b0d77f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        176
+      ],
+      "id": "71ff1ca2-af29-4f6f-9c14-4ae84157ef7d",
+      "name": "Webhook",
+      "webhookId": "6e83a809-4ab4-4c24-a829-b0f866b0d77f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$('Edit Fields1').item.json.url_server}}/message/sendtext/{{$('Edit Fields1').item.json.instance_name}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=apikey ",
+              "value": "={{ $('Edit Fields1').item.json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').item.json[' chat_id'] }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.output.response.part_1 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4112,
+        144
+      ],
+      "id": "bc59c2b6-a2a8-4f02-8a6b-4369c0e1207b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$('Edit Fields1').item.json.url_server}}/message/sendtext/{{$('Edit Fields1').item.json.instance_name}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=apikey ",
+              "value": "={{ $('Edit Fields1').item.json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').item.json[' chat_id'] }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('División de mensajes').item.json.output.response.part_2 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4192,
+        576
+      ],
+      "id": "ba2b4811-fd7b-4c5b-bb25-73190a438135",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$('Edit Fields1').item.json.url_server}}/message/sendtext/{{$('Edit Fields1').item.json.instance_name}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Edit Fields1').item.json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').item.json[' chat_id'] }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('División de mensajes').item.json.output.response.part_3 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4592,
+        320
+      ],
+      "id": "1542f05e-4395-4351-ac08-989965202ee6",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$('Edit Fields1').item.json.url_server}}/message/sendtext/{{$('Edit Fields1').item.json.instance_name}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Edit Fields1').item.json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').item.json[' chat_id'] }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('División de mensajes').item.json.output.response.part_4 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4960,
+        320
+      ],
+      "id": "c5afc491-b7bd-439a-a673-b4c550d24c8b",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$('Edit Fields1').item.json.url_server}}/message/sendtext/{{$('Edit Fields1').item.json.instance_name}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Edit Fields1').item.json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').item.json[' chat_id'] }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $('División de mensajes').item.json.output.response.part_5 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5280,
+        272
+      ],
+      "id": "f688364b-0f6b-4e2b-b657-79e1029e817c",
+      "name": "HTTP Request5"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "19jAR92T977-dL2h33c8eNuFHQGf-yn7098YYKR3MkCU",
+          "mode": "list",
+          "cachedResultName": "menu imagen",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19jAR92T977-dL2h33c8eNuFHQGf-yn7098YYKR3MkCU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "imagen",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19jAR92T977-dL2h33c8eNuFHQGf-yn7098YYKR3MkCU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        2656,
+        512
+      ],
+      "id": "3aef2b56-af75-4676-86a7-2852602948a6",
+      "name": "menu imagen",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "toolDescription": "Tool  para enviar imagen del menu o carta",
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.body.server_url }}/message/sendMedia/{{ $('Edit Fields1').item.json.instance_name }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Edit Fields1').item.json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').item.json[' chat_id'] }}"
+            },
+            {
+              "name": "mediatype",
+              "value": "image"
+            },
+            {
+              "name": "mimetype",
+              "value": "image/jpeg"
+            },
+            {
+              "name": "media",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Url del google drive, debe tener exactamente esta estructura:\n https://drive.google.com/uc?id=ID_IMAGEN&export=download`, 'string') }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', `Aqui esta el menu`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        2768,
+        592
+      ],
+      "id": "47ef96f2-9f0c-4b4f-86d7-7f1cf634e7e1",
+      "name": "Send image"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "evolution-chat-default",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        2576,
+        336
+      ],
+      "id": "c00dd692-fe51-45d5-9c3b-28ba3a5e8b30",
+      "name": "Postgres Chat Memory",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "evolution-chat-default"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        3120,
+        336
+      ],
+      "id": "86f37ec1-4172-41fc-be1d-4998a88862c7",
+      "name": "Postgres Chat Memory1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cd93a997-0fc5-428e-b082-97ed9514ce68",
+              "name": " chat_id",
+              "value": "={{ $json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "a7141542-e7df-465d-9dcd-23de6f903d52",
+              "name": "instance_name",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "bd9c0121-a047-4d93-960b-8bd974ca7c10",
+              "name": "apikey",
+              "value": "={{ $json.body.apikey }}",
+              "type": "string"
+            },
+            {
+              "id": "cebe38c3-4dd9-40a4-b6f0-60e62c9055b8",
+              "name": "url_server",
+              "value": "={{ $json.body.server_url }}",
+              "type": "string"
+            },
+            {
+              "id": "ccc71cd4-a656-4d2f-9bf6-692a1d5bd654",
+              "name": "final_message",
+              "value": "={{ $json.body.data.message.conversation }}",
+              "type": "string"
+            },
+            {
+              "id": "07c220ed-144b-4e56-8849-b292634f09ee",
+              "name": "sessionid",
+              "value": "={{ $json.body.data.key.id }}",
+              "type": "string"
+            },
+            {
+              "id": "2de0f662-193f-42d2-a4f6-00c33eb337dd",
+              "name": "times_tamp",
+              "value": "={{ $json.body.data.messageTimestamp.toDateTime('s').toLocal() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        176
+      ],
+      "id": "59288916-5431-4135-ba7c-3600d916a6e0",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Correctotr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Correctotr",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "División de mensajes",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "División de mensajes",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Correctotr": {
+      "main": [
+        [
+          {
+            "node": "División de mensajes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "División de mensajes": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fields": {
+      "main": [
+        [
+          {
+            "node": "Date & Time3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time3": {
+      "main": [
+        [
+          {
+            "node": "Date & Time2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orden": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Menu": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "menu imagen": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send image": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Correctotr",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "952ae049-627f-4ba3-bb04-8812ce4ce90a",
+  "meta": {
+    "instanceId": "51575a0ffa0686445d1debbd1e4451307221ee62fd3955a3317b5eb206d68764"
+  },
+  "id": "CFRj29yAEy7lfV0K",
+  "tags": []
+}
