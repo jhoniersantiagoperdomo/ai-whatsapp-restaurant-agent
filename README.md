@@ -89,7 +89,7 @@ También lo desarrollé como parte de mi crecimiento personal y técnico, aplica
 ### Menú
 ![Menú](screenshots/08-menu-display.png)
 
-### Resultado
+### Gestión de pedidos
 ![Resultado](screenshots/09-order-result.png)
 ---
 
