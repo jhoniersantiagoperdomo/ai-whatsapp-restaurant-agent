@@ -61,22 +61,36 @@ También lo desarrollé como parte de mi crecimiento personal y técnico, aplica
 
 ### Flujo del sistema
 
-- Procesamiento: `screenshots/01-workflow-1.png`
-- Agente IA: `screenshots/02-workflow-2.png`
-- Envío de mensajes: `screenshots/03-workflow-3.png`
+### Procesamiento
+![Procesamiento](screenshots/01-workflow-1.png)
+
+### Agente IA
+![Agente IA](screenshots/02-workflow-2.png)
+
+### Envío de mensajes
+![Envío de mensajes](screenshots/03-workflow-3.png)
 
 ### Interacción con el usuario
 
-- Inicio: `screenshots/04-chat-greeting-menu.png`
-- Pedido: `screenshots/05-chat-memory-order-selection.png`
-- Memoria: `screenshots/06-chat-memory-query.png`
-- Flujo natural: `screenshots/07-chat-natural-flow.png`
+### Inicio
+![Inicio](screenshots/04-chat-greeting-menu.png)
+
+### Pedido
+![Pedido](screenshots/05-chat-memory-order-selection.png)
+
+### Memoria
+![Memoria](screenshots/06-chat-memory-query.png)
+
+### Flujo natural
+![Flujo natural](screenshots/07-chat-natural-flow.png)
 
 ### Menú y gestión de pedidos
 
-- Menú: `screenshots/08-menu-display.png`
-- Resultado: `screenshots/09-order-result.png`
+### Menú
+![Menú](screenshots/08-menu-display.png)
 
+### Resultado
+![Resultado](screenshots/09-order-result.png)
 ---
 
 ## Manejo de datos
