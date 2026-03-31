@@ -62,35 +62,57 @@ También lo desarrollé como parte de mi crecimiento personal y técnico, aplica
 ### Flujo del sistema
 
 ### Procesamiento
-![Procesamiento](screenshots/01-workflow-1.png)
+<p align="center">
+  <img src="screenshots/01-workflow-1.png" width="500"/>
+</p>
 
 ### Agente IA
-![Agente IA](screenshots/02-workflow-2.png)
+<p align="center">
+  <img src="screenshots/02-workflow-2.png" width="500"/>
+</p>
 
 ### Envío de mensajes
-![Envío de mensajes](screenshots/03-workflow-3.png)
+<p align="center">
+  <img src="screenshots/03-workflow-3.png" width="500"/>
+</p>
 
-### Interacción con el usuario
+---
+
+## Interacción con el usuario
 
 ### Inicio
-![Inicio](screenshots/04-chat-greeting-menu.png)
+<p align="center">
+  <img src="screenshots/04-chat-greeting-menu.png" width="300"/>
+</p>
 
 ### Pedido
-![Pedido](screenshots/05-chat-memory-order-selection.png)
+<p align="center">
+  <img src="screenshots/05-chat-memory-order-selection.png" width="300"/>
+</p>
 
 ### Memoria
-![Memoria](screenshots/06-chat-memory-query.png)
+<p align="center">
+  <img src="screenshots/06-chat-memory-query.png" width="300"/>
+</p>
 
 ### Flujo natural
-![Flujo natural](screenshots/07-chat-natural-flow.png)
+<p align="center">
+  <img src="screenshots/07-chat-natural-flow.png" width="300"/>
+</p>
 
-### Menú y gestión de pedidos
+---
+
+## Menú y gestión de pedidos
 
 ### Menú
-![Menú](screenshots/08-menu-display.png)
+<p align="center">
+  <img src="screenshots/08-menu-display.png" width="500"/>
+</p>
 
 ### Gestión de pedidos
-![Resultado](screenshots/09-order-result.png)
+<p align="center">
+  <img src="screenshots/09-order-result.png" width="500"/>
+</p>
 ---
 
 ## Manejo de datos
