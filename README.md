@@ -109,9 +109,9 @@ Todos los datos incluidos en este repositorio son de prueba y no corresponden a 
 
 Durante el desarrollo se exploró el uso de Redis para optimizar el procesamiento de mensajes mediante agrupación en ventanas de tiempo.
 
-Esta implementación se incluye como experimento y no forma parte del flujo principal:
+Esta implementación no forma parte del flujo principal, pero se incluye como prueba técnica:
 
-- `experiments/redis-message-buffer.json`
+- [Ver implementación con Redis](experiments/redis-message-buffer.json)
 
 ---
 
@@ -120,6 +120,7 @@ Esta implementación se incluye como experimento y no forma parte del flujo prin
 ```bash
 ai-whatsapp-restaurant-agent/
 │
-├── restaurant-ai-workflow.json
-├── screenshots/
-├── experiments/
+├── restaurant-ai-workflow.json   # Flujo principal de automatización
+├── screenshots/                  # Capturas del sistema
+├── experiments/                  # Pruebas y desarrollos alternativos (Redis)
+├── README.md                     # Documentación del proyecto
